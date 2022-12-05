@@ -18,7 +18,7 @@ class MyHomePage extends StatelessWidget {
         children: [
           FloatingActionButton(
             onPressed: () {
-              noteDao.addNote(Note('Hello', 'Hello'));
+              noteDao.addNote(Note('Hello', 'Gello Gell'));
             },
             child: const Icon(Icons.add),
           ),
@@ -39,7 +39,10 @@ class MyHomePage extends StatelessWidget {
           return ListView.builder(
             itemCount: data.data!.length,
             itemBuilder: (context, position) {
-              return Text(data.data![position].message);
+              return ListTile(
+                title: Text(data.data![position].title),
+                subtitle: Text(data.data![position].message),
+              );
             },
           );
         } else if (data.hasError) {
