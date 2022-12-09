@@ -1,11 +1,15 @@
+import 'package:floor_flutter/add_screen.dart';
 import 'package:floor_flutter/database/note_dao.dart';
 import 'package:floor_flutter/database/notetable.dart';
+import 'package:floor_flutter/update_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class MyHomePage extends StatelessWidget {
-  final NoteDao noteDao;
+  final NoteDao noteDao = Get.find();
+  List<Note> note = [];
 
-  const MyHomePage(this.noteDao, {super.key});
+  MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,15 +21,19 @@ class MyHomePage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           FloatingActionButton(
+            heroTag: "Add",
             onPressed: () {
-              noteDao.addNote(Note('Hello', 'Gello Gell'));
+              Get.to(AddScreen());
             },
             child: const Icon(Icons.add),
           ),
           FloatingActionButton(
-            onPressed: () {},
+            heroTag: "Delete",
+            onPressed: () {
+              noteDao.deleteAllNote(note);
+            },
             child: const Icon(Icons.delete),
-          )
+          ),
         ],
       ),
       body: noteList(),
@@ -35,6 +43,7 @@ class MyHomePage extends StatelessWidget {
   Widget noteList() {
     return StreamBuilder<List<Note>>(
       builder: (context, data) {
+        note = data.data!;
         if (data.hasData) {
           return ListView.builder(
             itemCount: data.data!.length,
@@ -42,16 +51,30 @@ class MyHomePage extends StatelessWidget {
               return ListTile(
                 title: Text(data.data![position].title),
                 subtitle: Text(data.data![position].message),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    noteDao.deleteNote(data.data![position]);
+                  },
+                ),
+                leading: IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => Get.to(
+                    UpdateScreen(),
+                    arguments: data.data![position],
+                  ),
+                ),
               );
             },
           );
         } else if (data.hasError) {
-          return Text("Error");
+          return const Text("Error");
         } else {
-          return Text("loading");
+          return const Text("loading");
         }
       },
       stream: noteDao.getAllNotes(),
+
     );
   }
 }
