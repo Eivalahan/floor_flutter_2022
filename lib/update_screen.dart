@@ -35,7 +35,7 @@ class UpdateScreen extends StatelessWidget {
               TextField(
                 controller: messages,
                 decoration: const InputDecoration(
-                  hintText: 'Tittle',
+                  hintText: 'Title',
                   border: OutlineInputBorder(),
                 ),
               ),
